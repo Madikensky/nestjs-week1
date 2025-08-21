@@ -10,16 +10,21 @@ export class Task {
   @Column()
   title: string;
 
-  @Column()
+  @Column({type: "text"})
   description: string;
 
   @Column({
-    type: 'enum'
+    type: 'enum',
+    enum: TaskStatus,
+    default: TaskStatus.TODO
   })
   status: TaskStatus
 
-  @Column()
-  created_at: string;
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP'
+  })
+  created_at: Date;
 
   @ManyToOne(() => User, (user) => user.tasks, { onDelete: "CASCADE"} )
   user: User;
