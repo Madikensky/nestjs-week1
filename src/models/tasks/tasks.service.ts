@@ -1,9 +1,10 @@
 import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Task } from './entities/task.entity';
 import { TaskStatus } from './enums/task-status.enum';
 import { CreateTaskDto } from './dtos/createTaskDto';
+import { UpdateTaskDto } from './dtos/updateTask.dto';
 
 @Injectable()
 export class TasksService {
@@ -25,6 +26,7 @@ export class TasksService {
   }
 
   async getTasksByUser(id: number, status?: TaskStatus) {
+    console.log(id)
     return await this.taskRepository.find({
       where: {
         user: {id: id},
@@ -33,7 +35,18 @@ export class TasksService {
     })
   }
 
-  async updateTask(taskId: number, userId: number, title?: string, description?: string, status?: TaskStatus) {
+  async updateTask(taskId: number, dto: UpdateTaskDto) {
+    const task = await this.taskRepository.findOne({ where: { id: taskId } })
+    if (!task) throw new NotFoundException('There is no task with that id!')
 
+    Object.assign(task, dto)
+    return await this.taskRepository.save(task);
+  }
+
+  async deleteTask(taskId: number) {
+    const task = await this.taskRepository.findOne({where: { id: taskId }})
+    if (!task) throw new NotFoundException('No task with that id..');
+
+    return await this.taskRepository.delete(taskId);
   }
 }

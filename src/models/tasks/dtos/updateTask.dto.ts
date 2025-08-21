@@ -1,16 +1,17 @@
-import { IsString, IsNotEmpty, IsEnum, IsNumber } from "class-validator";
+import { IsString, IsNotEmpty, IsEnum, IsNumber, IsOptional } from "class-validator";
 import { TaskStatus } from "../enums/task-status.enum";
 
-export class CreateTaskDto {
+export class UpdateTaskDto {
   @IsString()
-  @IsNotEmpty({message: 'Title is required!'})
+  @IsOptional()
   title: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   description: string;
 
   @IsEnum(TaskStatus)
+  @IsOptional()
   status: TaskStatus;
 
   @IsNumber()
